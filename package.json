@@ -36,7 +36,7 @@
     "react-dom": "^19.0.0"
   },
   "lint-staged": {
-    "*.js": "eslint --cache --fix",
-    "*.--write": "prettier --write"
+    "*.js": "eslint --fix ",
+    "*.{js,css,md,html,json}": "prettier --cache --write"
   }
 }
