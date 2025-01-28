@@ -1,4 +1,6 @@
 import React from "react";
+import PropTypes from "prop-types";
+
 const Modal = ({ cartItems, onClose, onCheckout }) => {
     const totalPrice = cartItems.reduce(
         (total, item) => total + item.price * item.quantity,
@@ -47,4 +49,15 @@ const Modal = ({ cartItems, onClose, onCheckout }) => {
     );
 };
 
+Modal.propTypes = {
+    cartItems: PropTypes.arrayOf(
+      PropTypes.shape({
+        name: PropTypes.string.isRequired,
+        quantity: PropTypes.number.isRequired,
+        price: PropTypes.number.isRequired,
+      })
+    ).isRequired,
+    onClose: PropTypes.func.isRequired,
+    onCheckout: PropTypes.func.isRequired,
+  };
 export default Modal;

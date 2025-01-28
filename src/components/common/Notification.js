@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import PropTypes from 'prop-types';
 
 const Notification = ({ message, type, onClose }) => {
     if (!message) return null;
@@ -23,4 +24,9 @@ const Notification = ({ message, type, onClose }) => {
     return <div style={notificationStyle}>{message}</div>;
 };
 
+Notification.propTypes = {
+    message: PropTypes.string.isRequired, 
+    type: PropTypes.oneOf(['success', 'error']).isRequired,
+    onClose: PropTypes.func.isRequired,
+  };
 export default Notification;

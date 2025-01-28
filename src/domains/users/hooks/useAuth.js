@@ -1,36 +1,32 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
-import { loginUser } from "../services/usersService"; // Import the login service
+import { loginUser } from "../services/usersService";
+import PropTypes from 'prop-types';
 
-// Create AuthContext
 const AuthContext = createContext();
 
-// AuthProvider to wrap the application
 export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Check authentication on app load
   useEffect(() => {
     const storedUser = sessionStorage.getItem("loggedUser");
     if (storedUser) {
       setUser(JSON.parse(storedUser));
       setIsAuthenticated(true);
     }
-    setLoading(false); // Loading state is set to false after the check
+    setLoading(false); 
   }, []);
 
-  // Login function with service call
   const login = async (credentials) => {
-    const response = await loginUser(credentials); // Call the backend API
-    sessionStorage.setItem("loggedUser", JSON.stringify(response)); // Store user in session
+    const response = await loginUser(credentials);
+    sessionStorage.setItem("loggedUser", JSON.stringify(response));
     setUser(response);
     setIsAuthenticated(true);
   };
 
-  // Logout function
   const logout = () => {
-    sessionStorage.removeItem("loggedUser"); // Clear session
+    sessionStorage.removeItem("loggedUser");
     setUser(null);
     setIsAuthenticated(false);
   };
@@ -44,7 +40,10 @@ export const AuthProvider = ({ children }) => {
   );
 };
 
-// useAuth custom hook
+AuthProvider.propTypes = {
+  children: PropTypes.node.isRequired,
+};
+
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {

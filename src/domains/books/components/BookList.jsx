@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import Notification from "../../../components/common/Notification";
 import bookService from "../services/bookService"
+import PropTypes from 'prop-types';
+
 const BookList = ({ onAddToCart }) => {
     const [books, setBooks] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
@@ -20,7 +22,7 @@ const BookList = ({ onAddToCart }) => {
             setTotalPages(response.totalPages);
         } catch (error) {
             setNotification({
-                message: "Failed to fetch books. Please try again later.",
+                message: error.message,
                 type: "error",
             });
         } finally {
@@ -204,5 +206,15 @@ const BookList = ({ onAddToCart }) => {
         </div>
     );
 };
+BookList.propTypes = {
+    books: PropTypes.arrayOf(
+      PropTypes.shape({
+        id: PropTypes.number.isRequired,
+        title: PropTypes.string.isRequired,
+        price: PropTypes.number.isRequired,
+      })
+    ).isRequired,
+    onAddToCart: PropTypes.func.isRequired,
+  };
 
 export default BookList;

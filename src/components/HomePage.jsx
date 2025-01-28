@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import BookList from "../domains/books/components/BookList";
 import Cart from "../domains/cart/components/Cart";
 import cartService from "../domains/cart/services/cartService";
@@ -51,14 +51,14 @@ const [notification, setNotification] = useState(null);
             }
             const response = await cartService.checkoutCart(cartItems, username);
             setNotification({
-                message: "Order placed successfully!",
+                message: "Order"+response+" placed successfully! ",
                 type: "success",
             });
             setCartItems([]);
             setIsModalOpen(false);
         } catch (error) {
             setNotification({
-                message: "Failed to place order. Please try again later.",
+                message: error.message,
                 type: "error",
             });
         }

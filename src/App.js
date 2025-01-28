@@ -1,9 +1,8 @@
 import React from 'react';
-import { BrowserRouter, Navigate, Route, Router, Routes } from 'react-router-dom';
+import {  Navigate, Route, Routes } from 'react-router-dom';
 import RegisterPage from './domains/users/pages/RegisterPage';
 import LoginPage from './domains/users/pages/LoginPage';
 import HomePage from './components/HomePage';
-import Navbar from './components/common/navbar/Navbar';
 import NotFoundPage from './components/common/NotFoundPage';
 import ProtectedRoute from './ProtectedRoute';
 

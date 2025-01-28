@@ -6,7 +6,6 @@
 	"scripts": {
 		"start": "webpack-dev-server .",
 		"build": "webpack .",
-		"lint": "eslint . --fix --max-warnings=0",
 		"format": "prettier . --write",
 		"test": "jest",
 		"coverage": "jest --coverage",

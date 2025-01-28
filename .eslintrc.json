@@ -24,6 +24,7 @@
 	},
 	"rules": {
 		"prettier/prettier": "error",
+		"@typescript-eslint/no-require-imports": "off",
 		"react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
 		"import/no-extraneous-dependencies": ["error", { "devDependencies": true }],
 		"no-console": "warn",

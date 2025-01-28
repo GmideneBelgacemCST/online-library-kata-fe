@@ -1,4 +1,4 @@
-import axios, { setBasicAuth } from "../../../api/axios";
+import axios from "../../../api/axios";
 
 
 export const registerUser = async (formData) => {

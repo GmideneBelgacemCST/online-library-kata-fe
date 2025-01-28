@@ -1,5 +1,5 @@
 import React from "react";
-import Modal from "../../../components/common/Modal/Modal";
+import PropTypes from 'prop-types';
 
 const Cart = ({
     cartItems,
@@ -182,5 +182,18 @@ const Cart = ({
         </div>
     );
 };
-
+Cart.propTypes = {
+    cartItems: PropTypes.arrayOf(
+      PropTypes.shape({
+        id: PropTypes.number.isRequired,
+        name: PropTypes.string.isRequired,
+        price: PropTypes.number.isRequired,
+        quantity: PropTypes.number.isRequired,
+      })
+    ).isRequired,
+    onUpdateQuantity: PropTypes.func.isRequired,
+    onRemoveFromCart: PropTypes.func.isRequired,
+    onOpenModal: PropTypes.func.isRequired,
+    onClearCart: PropTypes.func.isRequired,
+  };
 export default Cart;
