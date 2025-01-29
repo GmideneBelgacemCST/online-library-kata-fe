@@ -18,9 +18,21 @@ Ensure you have the following installed before proceeding:
 
 ---
 
+
 ## 📥 Installation
 
-### **1️⃣ Clone the Repository**
+### ***Clone the Repository***
 ```bash
 git clone https://github.com/your-username/online-book-store.git
 cd online-book-store
+```
+### *** Install the dependencies***
+```bash
+npm install
+```
+### *** Running the Application***
+```bash
+npm start
+```
+This runs the application using webpack-dev-server on http://localhost:3000
+
