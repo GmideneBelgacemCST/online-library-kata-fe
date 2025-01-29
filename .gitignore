@@ -33,4 +33,9 @@ build/
 coverage
 .vscode/
 node_modules
+# Ignore coverage reports
+coverage/
+lcov.info
+
+# Ignore built files
 dist/

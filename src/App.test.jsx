@@ -2,6 +2,7 @@ import { render, screen } from '@testing-library/react';
 import React from 'react';
 import App from './App.js';
 import { MemoryRouter } from 'react-router-dom';
+import { AuthProvider } from './domains/users/hooks/useAuth.js';
 
 jest.mock("./domains/users/pages/RegisterPage", () => {
   const RegisterPage = () => <div>Register Page</div>;
@@ -25,7 +26,9 @@ describe("App Component", () => {
   test("redirects from `/` to `/register`", () => {
     render(
       <MemoryRouter initialEntries={["/"]}>
+         <AuthProvider>  
         <App />
+         </AuthProvider>  
       </MemoryRouter>
     );
     expect(screen.getByText(/Register Page/i)).toBeInTheDocument();
@@ -34,7 +37,9 @@ describe("App Component", () => {
   test("renders RegisterPage for `/register`", () => {
     render(
       <MemoryRouter initialEntries={["/register"]}>
+        <AuthProvider>  
         <App />
+         </AuthProvider> 
       </MemoryRouter>
     );
     expect(screen.getByText(/Register Page/i)).toBeInTheDocument();
@@ -43,7 +48,9 @@ describe("App Component", () => {
   test("renders LoginPage for `/login`", () => {
     render(
       <MemoryRouter initialEntries={["/login"]}>
+         <AuthProvider>  
         <App />
+         </AuthProvider> 
       </MemoryRouter>
     );
     expect(screen.getByText(/Login Page/i)).toBeInTheDocument();
@@ -52,16 +59,21 @@ describe("App Component", () => {
   test("renders HomePage for `/home`", () => {
     render(
       <MemoryRouter initialEntries={["/home"]}>
+         <AuthProvider>  
         <App />
+         </AuthProvider> 
       </MemoryRouter>
     );
-    expect(screen.getByText(/Home Page/i)).toBeInTheDocument();
+    screen.debug();
+    expect(screen.getByText(/HomePage/i)).toBeInTheDocument();
   });
 
   test("renders 404 page for unknown route", () => {
     render(
       <MemoryRouter initialEntries={["/unknown-page"]}>
+         <AuthProvider>  
         <App />
+         </AuthProvider> 
       </MemoryRouter>
     );
     expect(screen.getByText(/404 - Page Not Found/i)).toBeInTheDocument();
