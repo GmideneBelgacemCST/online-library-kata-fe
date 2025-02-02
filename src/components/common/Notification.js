@@ -1,17 +1,21 @@
-import React, { useEffect } from "react";
-import PropTypes from 'prop-types';
+import React, { useEffect, useState } from "react";
+import PropTypes from "prop-types";
 
 const Notification = ({ message, type, onClose }) => {
-    if (!message) return null;
+    const [visible, setVisible] = useState(false);
 
     useEffect(() => {
-        const timer = setTimeout(() => {
-            onClose();
-        }, 5000);
-
-        return () => clearTimeout(timer);
+        if (message) {
+            setVisible(true);
+            const timer = setTimeout(() => {
+                setVisible(false);
+                onClose(); // Call onClose after hiding the notification
+            }, 5000);
+            return () => clearTimeout(timer);
+        }
     }, [message, onClose]);
 
+    if (!visible) return null;
     const notificationStyle = {
         padding: "1rem",
         margin: "1rem 0",
@@ -20,13 +24,23 @@ const Notification = ({ message, type, onClose }) => {
         backgroundColor: type === "error" ? "#f8d7da" : "#d4edda",
         border: `1px solid ${type === "error" ? "#f5c6cb" : "#c3e6cb"}`,
     };
-
-    return <div style={notificationStyle}>{message}</div>;
+    return (
+        <div  style={notificationStyle}>
+            {message}
+        </div>
+    );
 };
 
+Notification.defaultProps = {
+    message: "",
+};
+
+
+
 Notification.propTypes = {
-    message: PropTypes.string.isRequired, 
-    type: PropTypes.oneOf(['success', 'error']).isRequired,
+    message: PropTypes.string,
+    type: PropTypes.oneOf(["success", "error"]).isRequired,
     onClose: PropTypes.func.isRequired,
-  };
+};
+
 export default Notification;

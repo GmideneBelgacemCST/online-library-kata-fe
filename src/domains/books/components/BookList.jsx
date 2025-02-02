@@ -8,7 +8,6 @@ import PropTypes from "prop-types";
 const BookList = ({ onAddToCart }) => {
     const { books, currentPage, totalPages, loading, error, setCurrentPage } = useBooks();
     const [notification, setNotification] = useState(null);
-    console.log("from list",books,currentPage,loading,totalPages)
 
     const handleAddToCart = (book) => {
         onAddToCart(book);

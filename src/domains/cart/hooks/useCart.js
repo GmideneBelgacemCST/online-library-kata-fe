@@ -7,6 +7,8 @@ export function useCart() {
 
     const addToCart = (book) => {
         try {
+            console.log("bdddook",book);
+            console.log("prevCArt",cartItems);
             setCartItems((prevCart) => CartService.addToCart(prevCart, book));
             setNotification({ message: "Item added to cart!", type: "success" });
         } catch (error) {

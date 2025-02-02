@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 
 const Pagination = ({ currentPage, totalPages, onPageChange }) => {
     return (
-        <div style={{ textAlign: "center" }}>
+        <div style={{...styles.container }}>
             <button
                 onClick={() => onPageChange(currentPage - 1)}
                 disabled={currentPage === 1}
@@ -15,7 +15,7 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
             >
                 Previous
             </button>
-            <span style={{ fontWeight: "bold" }}> Page {currentPage} of {totalPages} </span>
+            <span style={{ ...styles.text, }}> Page {currentPage} of {totalPages} </span>
             <button
                 onClick={() => onPageChange(currentPage + 1)}
                 disabled={currentPage === totalPages}
@@ -32,12 +32,28 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
 };
 
 const styles = {
+    container: {
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        gap: "80px",
+        width: "fit-content",
+        margin: "20px auto",
+        padding: "10px",
+        borderRadius: "10px",
+    },
     button: {
-        padding: "0.5rem 1rem",
+        padding: "10px 15px",
+        fontSize: "14px",
         color: "#fff",
         border: "none",
         borderRadius: "5px",
-        margin: "0 10px",
+        minWidth: "80px",
+        textAlign: "center",
+    },
+    text: {
+        fontWeight: "bold",
+        fontSize: "16px",
     },
 };
 

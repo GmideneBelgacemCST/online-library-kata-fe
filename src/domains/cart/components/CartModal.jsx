@@ -34,6 +34,12 @@ const styles = {
         borderRadius: "5px",
         cursor: "pointer",
     },
+    closeButton: {
+        background: "none",
+        border: "none",
+        fontSize: "1.5rem",
+        cursor: "pointer",
+    },
 };
 CartModal.propTypes = {
     isOpen: PropTypes.bool.isRequired,

@@ -1,6 +1,7 @@
 import axios from "../../../api/axios";
 
 const checkoutCartCall =async (cartItems, username) => {
+  console.log(cartItems)
     try {
       let items = Array.isArray(cartItems) ? cartItems.map((item) => ({
         title: item.title,
@@ -17,7 +18,7 @@ const checkoutCartCall =async (cartItems, username) => {
         console.warn("Cart is empty. Returning a response with an empty items array.");
         return payload;
       }
-      const response = await axios.post("/orders", this.payload);
+      const response = await axios.post("/orders", payload);
       return response.data;
     } catch (error) {
       console.error("Failed to checkout cart:", error);

@@ -2,7 +2,6 @@ import React from "react";
 import PropTypes from "prop-types";
 
 const BookTable = ({ books, onAddToCart }) => {
-    console.log("from table",books)
     return (
         <table style={{ width: "100%", borderCollapse: "collapse", marginBottom: "1rem" }}>
             <thead>

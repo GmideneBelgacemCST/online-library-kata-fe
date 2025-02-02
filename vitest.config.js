@@ -2,11 +2,11 @@ import { defineConfig } from "vitest/config";
 
 export default defineConfig({
     test: {
-        globals: true, // ✅ Enables `describe`, `it`, `expect`
+        globals: true,
         coverage: {
-            provider: "c8", // ✅ Ensures test coverage works
-            reporter: ["text", "json", "html"], // ✅ Generates reports
+            provider: "c8",
+            reporter: ["text", "json", "html"],
         },
-        environment: "jsdom", // ✅ Simulates browser-like environment for React
+        environment: "jsdom",
     },
 });

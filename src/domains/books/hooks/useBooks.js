@@ -19,8 +19,6 @@ export function useBooks() {
             const response = await bookService.fetchBooksPaginated(page);
             setBooks(response.books);
             setTotalPages(response.totalPages);
-            console.log("from hook",books)
-
         } catch (err) {
             setError(err.message || "Failed to load books");
         } finally {
