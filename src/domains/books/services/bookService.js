@@ -1,9 +1,15 @@
-import axios from "../../../api/axios";
+import {BookRepository} from "../repository/bookRepository";
 
 
 const fetchBooksPaginated = async (page) => {
-    const response = await axios.get(`/library/books?page=${page}`);
-    return response.data;
+    const booksData = await BookRepository.fetchBooksPaginated(page);
+    console.log("from list", booksData.data.data)
+
+    return {
+        books: booksData.data.data,
+        totalPages: booksData.data.totalPages,
+        currentPage: booksData.data.currentPage
+    };
 };
 
 const bookService = {

@@ -1,88 +1,124 @@
 import { renderHook, act } from "@testing-library/react";
 import { useCart } from "../hooks/useCart";
 import CartService from "../services/cartService";
-import { vi } from "vitest";
+import {describe, it, vi,expect,beforeEach} from "vitest";
 
-vi.mock("../services/cartService");
+vi.mock("../services/cartService", () => ({
+    default: {
+        addToCart: vi.fn((prevCart, book) => [...prevCart, { ...book, quantity: 1 }]),
+        removeFromCart: vi.fn((prevCart, bookTitle) => prevCart.filter((item) => item.title !== bookTitle)),
+        updateQuantity: vi.fn((prevCart, bookTitle, quantity) =>
+            prevCart.map((item) => (item.title === bookTitle ? { ...item, quantity } : item))
+        ),
+        clearCart: vi.fn(() => []),
+        checkoutCart: vi.fn(),
+    },
+}));
+
+const mockSessionStorage = (() => {
+    let store = {};
+    return {
+        getItem: (key) => store[key] || null,
+        setItem: (key, value) => (store[key] = value),
+        clear: () => (store = {}),
+    };
+})();
+
+Object.defineProperty(window, "sessionStorage", { value: mockSessionStorage });
 
 describe("useCart Hook", () => {
     beforeEach(() => {
-        vi.clearAllMocks();
+        vi.clearAllMocks(); // Reset all mocks before each test
+        window.sessionStorage.clear(); // Clear sessionStorage before each test
     });
 
-    it("✅ initializes with an empty cart", () => {
+    it("initializes with an empty cart and no notification", () => {
         const { result } = renderHook(() => useCart());
         expect(result.current.cartItems).toEqual([]);
+        expect(result.current.notification).toEqual({ message: "", type: "" });
     });
 
-    it("✅ adds an item to the cart", () => {
+    it("adds an item to the cart", () => {
         const { result } = renderHook(() => useCart());
 
         act(() => {
-            result.current.addToCart({ id: 1, title: "React 101", price: 29.99 });
+            result.current.addToCart({ title: "title-1", author: "author-1", price: 29.99 });
         });
-
-        act(() => {}); // Ensure React state updates before asserting
 
         expect(result.current.cartItems).toHaveLength(1);
-        expect(result.current.cartItems[0].quantity).toBe(1);
+        expect(result.current.cartItems[0]).toEqual({
+            title: "title-1", author: "author-1", price: 29.99,quantity: 1,
+        });
+        expect(result.current.notification).toEqual({
+            message: "Item added to cart!",
+            type: "success",
+        });
     });
 
-    it("✅ removes an item from the cart", () => {
+    it("removes an item from the cart", () => {
         const { result } = renderHook(() => useCart());
 
         act(() => {
-            result.current.addToCart({ id: 1, title: "React 101", price: 29.99 });
+            result.current.addToCart({ title: "title-1", author: "author-1", price: 29.99 });
         });
 
         act(() => {
-            result.current.removeFromCart("React 101");
+            result.current.removeFromCart("title-1");
         });
-
-        act(() => {}); // Ensure state updates
 
         expect(result.current.cartItems).toHaveLength(0);
+        expect(result.current.notification).toEqual({
+            message: "Item removed from cart!",
+            type: "info",
+        });
     });
 
-    it("✅ updates item quantity", () => {
+    it("updates item quantity", () => {
         const { result } = renderHook(() => useCart());
 
         act(() => {
-            result.current.addToCart({ id: 1, title: "React 101", price: 29.99 });
+            result.current.addToCart({title: "title-1", author: "author-1", price: 29.99});
         });
 
         act(() => {
-            result.current.updateQuantity("React 101", 5);
+            result.current.updateQuantity("title-1", 5);
         });
-
-        act(() => {}); // Ensure state updates
 
         expect(result.current.cartItems[0].quantity).toBe(5);
+        expect(result.current.notification).toEqual({
+            message: "Quantity updated!",
+            type: "success",
+        });
     });
 
-    it("✅ clears the cart", () => {
+    it("clears the cart", () => {
         const { result } = renderHook(() => useCart());
 
         act(() => {
-            result.current.addToCart({ id: 1, title: "React 101", price: 29.99 });
+            result.current.addToCart({ title: "title-1", author: "author-1", price: 29.99 });
         });
 
         act(() => {
             result.current.clearCart();
         });
 
-        act(() => {}); // Ensure state updates
-
         expect(result.current.cartItems).toHaveLength(0);
+        expect(result.current.notification).toEqual({
+            message: "Cart has been cleared!",
+            type: "info",
+        });
     });
 
-    it("✅ handles checkout success", async () => {
-        CartService.checkoutCart.mockResolvedValueOnce("Order placed");
+    it("handles checkout success", async () => {
+        CartService.checkoutCart.mockResolvedValueOnce("12345");
+
+        // Mock a logged-in user
+        window.sessionStorage.setItem("loggedUser", JSON.stringify({ username: "test_user" }));
 
         const { result } = renderHook(() => useCart());
 
         act(() => {
-            result.current.addToCart({ id: 1, title: "React 101", price: 29.99 });
+            result.current.addToCart({ title: "title-1", author: "author-1", price: 29.99 });
         });
 
         await act(async () => {
@@ -90,11 +126,16 @@ describe("useCart Hook", () => {
         });
 
         expect(result.current.cartItems).toHaveLength(0);
-        expect(result.current.notification.message).toBe("Order placed");
+        expect(result.current.notification).toEqual({
+            message: "Cart has been cleared!",
+            type: "info",
+        });
     });
 
-    it("✅ handles checkout failure", async () => {
+    it("handles checkout failure", async () => {
         CartService.checkoutCart.mockRejectedValueOnce(new Error("Checkout error"));
+
+        window.sessionStorage.setItem("loggedUser", JSON.stringify({ username: "test_user" }));
 
         const { result } = renderHook(() => useCart());
 
@@ -102,6 +143,22 @@ describe("useCart Hook", () => {
             await result.current.checkout();
         });
 
-        expect(result.current.notification.message).toBe("Checkout error");
+        expect(result.current.notification).toEqual({
+            message: "Checkout error",
+            type: "error",
+        });
+    });
+
+    it(" handles checkout failure when user is not logged in", async () => {
+        const { result } = renderHook(() => useCart());
+
+        await act(async () => {
+            await result.current.checkout();
+        });
+
+        expect(result.current.notification).toEqual({
+            message: "User is not logged in!",
+            type: "error",
+        });
     });
 });

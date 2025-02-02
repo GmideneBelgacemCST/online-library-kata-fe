@@ -1,6 +1,6 @@
 import React from "react";
 import Modal from "../../../components/common/Modal/Modal";
-
+import PropTypes from "prop-types";
 const CartModal = ({ isOpen, onClose, cartItems, onCheckout }) => {
     return (
         <Modal isOpen={isOpen} onClose={onClose} title="Cart Summary">
@@ -35,5 +35,17 @@ const styles = {
         cursor: "pointer",
     },
 };
-
+CartModal.propTypes = {
+    isOpen: PropTypes.bool.isRequired,
+    onClose: PropTypes.func.isRequired,
+    cartItems: PropTypes.arrayOf(
+        PropTypes.shape({
+            id: PropTypes.number.isRequired,
+            title: PropTypes.string.isRequired,
+            price: PropTypes.number.isRequired,
+            quantity: PropTypes.number.isRequired,
+        })
+    ).isRequired,
+    onCheckout: PropTypes.func.isRequired,
+};
 export default CartModal;

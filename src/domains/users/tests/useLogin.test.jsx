@@ -1,26 +1,37 @@
+import React from "react"; // ✅ Ensure React is imported
 import { renderHook, act } from "@testing-library/react";
 import { useLogin } from "../hooks/useLogin";
-import { useAuth } from "../hooks/useAuth";
-import { vi } from "vitest";
-import { BrowserRouter } from "react-router-dom"; // ✅ Wrap test in a Router
+import { useAuth, AuthProvider } from "../hooks/useAuth";
+import {describe, it, vi, expect} from "vitest";
+import { BrowserRouter } from "react-router-dom";
 
-// ✅ Mock `useAuth`
-vi.mock("../hooks/useAuth", () => ({
-    useAuth: vi.fn(() => ({
-        login: vi.fn(), // ✅ Ensure `login` is defined
-    })),
-}));
+vi.mock("../hooks/useAuth", async (importOriginal) => {
+    const actual = await importOriginal();
+    return {
+        ...actual,
+        useAuth: vi.fn(() => ({
+            isAuthenticated: false,
+            user: null,
+            login: vi.fn(),
+            logout: vi.fn(),
+            loading: false,
+        })),
+    };
+});
 
-// ✅ Wrap hook inside Router
-const renderHookWithRouter = (hook) => {
+const renderHookWithProviders = (hook) => {
     return renderHook(hook, {
-        wrapper: ({ children }) => <BrowserRouter>{children}</BrowserRouter>,
+        wrapper: ({ children }) => (
+            <BrowserRouter>
+                <AuthProvider>{children}</AuthProvider>
+            </BrowserRouter>
+        ),
     });
 };
 
 describe("useLogin Hook", () => {
-    it("✅ initializes with empty username, password, and no notification", () => {
-        const { result } = renderHookWithRouter(() => useLogin());
+    it("initializes with empty username, password, and no notification", () => {
+        const { result } = renderHookWithProviders(() => useLogin());
 
         expect(result.current.username).toBe("");
         expect(result.current.password).toBe("");
@@ -28,8 +39,8 @@ describe("useLogin Hook", () => {
         expect(result.current.loading).toBe(false);
     });
 
-    it("✅ updates username and password", () => {
-        const { result } = renderHookWithRouter(() => useLogin());
+    it("updates username and password", () => {
+        const { result } = renderHookWithProviders(() => useLogin());
 
         act(() => {
             result.current.setUsername("john_doe");
@@ -40,29 +51,30 @@ describe("useLogin Hook", () => {
         expect(result.current.password).toBe("password123");
     });
 
-    it("✅ handles successful login", async () => {
-        const mockLogin = vi.fn().mockResolvedValueOnce();
-        useAuth.mockReturnValue({ login: mockLogin });
+    it("handles successful login", async () => {
+        const mockLogin = vi.fn().mockResolvedValueOnce({ username: "john_doe" });
+        useAuth.mockReturnValue({ ...useAuth(), login: mockLogin });
 
-        const { result } = renderHookWithRouter(() => useLogin());
+        const { result } = renderHookWithProviders(() => useLogin());
 
         await act(async () => {
             await result.current.handleLogin({ preventDefault: () => {} });
         });
 
         expect(result.current.notification.message).toBe("Login successful!");
+        expect(mockLogin).toHaveBeenCalled();
     });
 
-    it("✅ handles failed login", async () => {
+    it("handles failed login", async () => {
         const mockLogin = vi.fn().mockRejectedValueOnce(new Error("Invalid credentials"));
-        useAuth.mockReturnValue({ login: mockLogin });
+        useAuth.mockReturnValue({ ...useAuth(), login: mockLogin });
 
-        const { result } = renderHookWithRouter(() => useLogin());
+        const { result } = renderHookWithProviders(() => useLogin());
 
         await act(async () => {
             await result.current.handleLogin({ preventDefault: () => {} });
         });
 
-        expect(result.current.notification.message).toBe("Invalid credentials");
+        expect(result.current.notification.message).toBe("Invalid credentials.");
     });
 });

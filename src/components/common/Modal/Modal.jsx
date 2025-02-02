@@ -1,5 +1,5 @@
 import React from "react";
-
+import PropTypes from "prop-types";
 const Modal = ({ isOpen, onClose, title, children }) => {
     if (!isOpen) return null;
 
@@ -55,5 +55,10 @@ const styles = {
         marginTop: "1rem",
     },
 };
-
+Modal.propTypes = {
+    isOpen: PropTypes.bool.isRequired,
+    onClose: PropTypes.func.isRequired,
+    title: PropTypes.string.isRequired,
+    children: PropTypes.node.isRequired,
+};
 export default Modal;
